@@ -50,9 +50,13 @@ def search_jira_issue(search_dict):
     except Exception as e:
         return {"status": "failure", "reason": str(e)}
 
-# 使用範例
-search_data = SearchIssueInput(issue_title="Blog")
+def main():
+    # 使用範例
+    search_data = SearchIssueInput(issue_title="Blog")
 
-tool = JiraSearchTool()
-response = tool._run(search_data)
-print(response)
+    tool = JiraSearchTool()
+    response = tool._run(search_data)
+    print(response)
+
+if __name__ == "__main__":
+    main()
