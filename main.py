@@ -2,7 +2,7 @@ import os
 from langchain.agents import AgentType
 from langchain.agents import initialize_agent
 from langchain.chat_models import ChatOpenAI
-from jira_agent import JiraSearchTool
+from jira_issue_search import JiraSearchTool
 
 model = ChatOpenAI(model="gpt-3.5-turbo-0613")
 tools = [JiraSearchTool()]

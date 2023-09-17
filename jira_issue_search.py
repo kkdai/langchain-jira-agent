@@ -67,43 +67,9 @@ def search_jira_issue(issue_title=None, assignee=None, status=None, project=None
     except Exception as e:
         return {"status": "failure", "reason": str(e)}
     
-
-def get_jira_issue_details(issue_key):
-    # 建立 JIRA 連線
-    try:
-        jira = JIRA(server=jira_server, basic_auth=(jira_username, jira_password))
-    except Exception as e:
-        return {"status": "failure", "reason": str(e)}
-
-    # 查詢 issue
-    try:
-        issue = jira.issue(issue_key)
-        assignee = issue.fields.assignee.displayName if issue.fields.assignee else None
-        status = issue.fields.status.name
-
-        # 取得最新的兩個 comments
-        comments = issue.fields.comment.comments
-        latest_comments = comments[-2:] if len(comments) > 2 else comments
-        latest_comments = [{"author": comment.author.displayName, "body": comment.body} for comment in latest_comments]
-
-        return {
-            "status": "success",
-            "issue_details": {
-                "issue_key": issue_key,
-                "assignee": assignee,
-                "status": status,
-                "latest_comments": latest_comments
-            }
-        }
-    except Exception as e:
-        return {"status": "failure", "reason": str(e)}
-    
 def main():
     # 使用範例
     response = search_jira_issue(issue_title="", assignee=None, status="OPEN, IN PROGRESS")
     print(response)
-    response2 = get_jira_issue_details("JIRA-1234")
-    print(response2)
-
 if __name__ == "__main__":
     main()
