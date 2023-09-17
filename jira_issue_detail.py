@@ -9,26 +9,22 @@ jira_server = os.getenv('JIRA_INSTANCE_URL', None) # e.g. https://jira.example.c
 jira_username = os.getenv('JIRA_USERNAME', None) # e.g. jira_username
 jira_password = os.getenv('JIRA_API_TOKEN', None) # e.g. jira_user_password.
 
-class SearchIssueInput(BaseModel):
+class IssueDetailInput(BaseModel):
     """Search Jira issue input parameters."""
-    # project_key: str = Field(..., description="The key of the project")
-    issue_title: str = Field(..., description="The title of the issue")
-    assignee: str = Field(..., description="The assignee of the issue")
-    status: str = Field(..., description="The status of the issue, e.g. OPEN, IN PROGRESS, DONE. Not-closed issues will be treat as OPEN and IN PROGRESS .")
-    project: str = Field(..., description="The project of the issues. If not specified, all projects will be searched. If specified, the project key should be provided. e.g. ")
+    issue_key: str = Field(..., description="The key of the jira issue")
 
-class JiraSearchTool(BaseTool):
-    name = "search_jira_issue"
-    description = "Search issues in Jira"
+class IssueDetailTool(BaseTool):
+    name = "jira_detail_issue"
+    description = "Find details of a Jira issue, try to explain the issue and its status like a human."
 
-    def _run(self, issue_title:str, assignee: str, status: str, project: str):
-        issue_results = search_jira_issue(issue_title, assignee, status)
+    def _run(self, issue_key:str):
+        issue_results = get_jira_issue_details(issue_key)
         return issue_results
 
-    def _arun(self, issue_title:str, assignee: str, status: str, project: str):
+    def _arun(self, issue_key:str):
         raise NotImplementedError("This tool does not support async")
 
-    args_schema: Optional[Type[BaseModel]] = SearchIssueInput
+    args_schema: Optional[Type[BaseModel]] = IssueDetailInput
 
 def get_jira_issue_details(issue_key):
     # 建立 JIRA 連線
