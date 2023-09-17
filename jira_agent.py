@@ -5,9 +5,9 @@ from pydantic import BaseModel, Field
 from langchain.tools import BaseTool
 
 
-jira_server = os.getenv('JIRA_INSTANCE_URL', None)
-jira_username = os.getenv('JIRA_USERNAME', None)
-jira_password = os.getenv('JIRA_API_TOKEN', None)
+jira_server = os.getenv('JIRA_INSTANCE_URL', None) # e.g. https://jira.example.com
+jira_username = os.getenv('JIRA_USERNAME', None) # e.g. jira_username
+jira_password = os.getenv('JIRA_API_TOKEN', None) # e.g. jira_user_password.
 
 class SearchIssueInput(BaseModel):
     """Search Jira issue input parameters."""
