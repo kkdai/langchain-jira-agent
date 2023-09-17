@@ -1,24 +1,23 @@
 import os
 from langchain.agents import AgentType
 from langchain.agents import initialize_agent
-from langchain.agents.agent_toolkits.jira.toolkit import JiraToolkit
 from langchain.chat_models import ChatOpenAI
-from langchain.utilities.jira import JiraAPIWrapper
-from langchain.prompts import PromptTemplate
-from jira_agent import JiraSearchTool, SearchIssueInput
+from jira_agent import JiraSearchTool
 
 model = ChatOpenAI(model="gpt-3.5-turbo-0613")
 tools = [JiraSearchTool()]
-agent = initialize_agent(
-    tools, 
-    model, 
-    agent=AgentType.OPENAI_FUNCTIONS, 
-    verbose=True
-)
+open_ai_agent = initialize_agent(tools,
+                                 model,
+                                 agent=AgentType.OPENAI_FUNCTIONS,
+                                 verbose=True)
 
-
-agent.run("幫我尋找所有企業參訪的相關資訊")
-
+while True:
+    try:
+        question = input("Question: ")
+        tool_result = open_ai_agent.run(question)
+        print("Answer: ", tool_result)
+    except KeyboardInterrupt:
+        break
 
 # template = """
 # You are an AI assistant specializing in creating Jira tickets. 
