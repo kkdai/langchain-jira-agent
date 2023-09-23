@@ -11,9 +11,7 @@ jira_password = os.getenv('JIRA_API_TOKEN', None) # e.g. jira_user_password.
 
 class SearchIssueInput(BaseModel):
     """Search Jira issue input parameters."""
-    # project_key: str = Field(..., description="The key of the project")
     issue_title: str = Field(..., description="The title of the issue")
-    assignee: str = Field(..., description="The assignee of the issue")
     status: str = Field(..., description="The status of the issue, e.g. OPEN, IN PROGRESS, DONE. Not-closed issues will be treat as OPEN and IN PROGRESS .")
     project: str = Field(..., description="The project of the issues. If not specified, all projects will be searched. If specified, the project key should be provided. e.g. ")
 
@@ -21,16 +19,16 @@ class JiraSearchTool(BaseTool):
     name = "search_jira_issue"
     description = "Search issues in Jira"
 
-    def _run(self, issue_title:str, assignee: str, status: str, project: str):
-        issue_results = search_jira_issue(issue_title, assignee, status)
+    def _run(self, issue_title:str, status: str, project: str):
+        issue_results = search_jira_issue(issue_title, status, project)
         return issue_results
 
-    def _arun(self, issue_title:str, assignee: str, status: str, project: str):
+    def _arun(self, issue_title:str, status: str, project: str):
         raise NotImplementedError("This tool does not support async")
 
     args_schema: Optional[Type[BaseModel]] = SearchIssueInput
 
-def search_jira_issue(issue_title=None, assignee=None, status=None, project=None):
+def search_jira_issue(issue_title=None, status=None, project=None):
     # 建立 JIRA 連線
     try:
         jira = JIRA(server=jira_server, basic_auth=(jira_username, jira_password))
@@ -43,8 +41,6 @@ def search_jira_issue(issue_title=None, assignee=None, status=None, project=None
         jql_str += f'project = "{project}"'
     if issue_title:
         jql_str += f' AND summary ~ "{issue_title}"' if jql_str else f'summary ~ "{issue_title}"'
-    if assignee:
-        jql_str += f' AND assignee = "{assignee}"' if jql_str else f'assignee = "{assignee}"'
     if status:
         status_list = status.split(',')
         status_list = [s.strip() for s in status_list]  # remove leading and trailing spaces
@@ -69,7 +65,7 @@ def search_jira_issue(issue_title=None, assignee=None, status=None, project=None
     
 def main():
     # 使用範例
-    response = search_jira_issue(issue_title="", assignee=None, status="OPEN, IN PROGRESS")
+    response = search_jira_issue(issue_title="", status="OPEN, IN PROGRESS", project="JIRA")
     print(response)
 if __name__ == "__main__":
     main()

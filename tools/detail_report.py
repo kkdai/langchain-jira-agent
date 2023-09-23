@@ -38,6 +38,7 @@ def get_jira_issue_details(issue_key):
         issue = jira.issue(issue_key)
         assignee = issue.fields.assignee.displayName if issue.fields.assignee else None
         status = issue.fields.status.name
+        title = issue.fields.summary
 
         # 取得最新的兩個 comments
         comments = issue.fields.comment.comments
@@ -47,6 +48,7 @@ def get_jira_issue_details(issue_key):
         return {
             "status": "success",
             "issue_details": {
+                "title": title,
                 "issue_key": issue_key,
                 "assignee": assignee,
                 "status": status,
